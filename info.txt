@@ -1,0 +1,8 @@
+NumPy 2.4.4
+Pandas 3.0.2
+scikit-learn 1.8.0
+SciPy 1.17.1
+matplotlib 3.10.9
+mglearn 0.2.0
+ipython 9.13.0
+Jupyter Notebook 1.1.1
