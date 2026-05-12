@@ -1,3 +1,4 @@
+# One-Hot Encoding
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
