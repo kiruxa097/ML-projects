@@ -27,8 +27,8 @@ categorical_cols = ["sex", "embarked", "pclass"]
 preprocesor = ColumnTransformer ([
     (
         "num", Pipeline ([
-            ("scaler", StandardScaler()),
             ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler()),
     ]), numeric_cols
     ),
     (
