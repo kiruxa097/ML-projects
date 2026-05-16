@@ -18,7 +18,7 @@ mod.fit(X_train, y_train)
 pred = mod.predict(X_test)
 
 # Находим элементы матрицы ошибок
-tp, tn, fp, fn = confusion_matrix(y_test, pred).ravel()
+tn, fp, fn, tp = confusion_matrix(y_test, pred).ravel()
 
 # Построим матрицу ошибок 
 print(f"-----Матрица ошибок-----")
@@ -26,7 +26,7 @@ print(f"|    TP={tp}  FN={fn}      |")
 print(f"|    FP={fp}   TN={tn}       |")
 print(f"------------------------")
 print(f"Находим accuracy(делали ранее) и 3 новых метрики (Precision, Recall, F1-score)")
-print(f"accuracy: {accuracy_score(y_test, pred)*100:.1f}")
-print(f"precision: {precision_score(y_test, pred)*100:.1f}")
-print(f"recall: {recall_score(y_test, pred)*100:.1f}")
-print(f"f1-score: {f1_score(y_test, pred)*100:.1f}")
+print(f"accuracy: {accuracy_score(y_test, pred)*100:.1f}%")
+print(f"precision: {precision_score(y_test, pred)*100:.1f}%")
+print(f"recall: {recall_score(y_test, pred)*100:.1f}%")
+print(f"f1-score: {f1_score(y_test, pred)*100:.1f}%")
