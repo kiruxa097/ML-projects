@@ -27,14 +27,10 @@ train_loader = DataLoader(
 
 test_loader = DataLoader(
     test_dataset,
-    shuffle=True,
+    shuffle=False,
     batch_size=100
 )
 
-X_train, y_train = next(iter(train_loader)) # Первый батч
-X_test, y_test = next(iter(test_loader))
-
-y_train = y_train.long()
 class MNISTmodel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -54,8 +50,22 @@ class MNISTmodel(nn.Module):
         return x
 
 model = MNISTmodel()
-output = model(X_train)
+
+optimizer = torch.optim.SGD(
+    model.parameters(),
+    lr=0.1
+)
 
 loss_fn = nn.CrossEntropyLoss()
-loss = loss_fn(output, y_train)
+
+
+for epoch in range(20):
+    for x_train, y_train in train_loader:
+
+        output = model(x_train)
+
+        optimizer.zero_grad()
+        loss = loss_fn(output, y_train)
+        loss.backward()
+        optimizer.step()
 print(loss)
