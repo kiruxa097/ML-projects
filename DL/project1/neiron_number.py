@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 transform = transforms.ToTensor()
 
@@ -21,17 +22,25 @@ test_dataset = datasets.MNIST(
     transform=transform
 )
 
-train_loader = DataLoader (
-    train_dataset,
-    batch_size=100,
-    shuffle=True
+train_d_t, train_d_v = random_split(train_dataset, [0.7, 0.3])
+
+train_dataloader = DataLoader(
+    train_d_t,
+    shuffle=True,
+    batch_size=64
 )
 
-test_loader = DataLoader (
+validation_dataloader = DataLoader(
+    train_d_v,
+    shuffle=True,
+    batch_size=64
+)
+
+test_dataloader = DataLoader(
     test_dataset,
-    batch_size=100
+    shuffle=False,
+    batch_size=64
 )
-
 
 class MyModel(nn.Module):
     def __init__(self):
@@ -76,15 +85,55 @@ optimizer = torch.optim.SGD(
     lr=0.1
 )
 
+loss_on_train = []
+loss_on_val = []
+
 for epoch in range(20):
-    for X, y in train_loader:
-        output = model(X)
+
+    loss_on_steps = 0
+    k = 0
+
+    model.train() # Переводим модель в тренировочный режим, считаем градиенты и т.д
+
+    for X_train, y_train in train_dataloader:
+        output = model(X_train)
         optimizer.zero_grad()
-        loss = loss_entry(output, y)
+        loss = loss_entry(output, y_train)
         loss.backward()
         optimizer.step()
 
-x_test1, y_test1 = test_dataset[0]
-x_test1 = x_test1.unsqueeze(0)
-print(model(x_test1))
-print(y_test1)
+        loss_on_steps += loss.item()
+        k += 1
+
+    model.eval()
+
+    loss_on_steps1 = 0
+    k1 = 0
+
+    for X_val, y_val in validation_dataloader:
+        output = model(X_val)
+        loss = loss_entry(output, y_val)
+        loss_on_steps1 += loss.item()
+        k1 += 1
+
+    loss_on_train.append(loss_on_steps/k)
+    loss_on_val.append(loss_on_steps1/k1)
+
+# Отобразим графики значений функции потерь и эпоху, чтобы посмотреть, где графики начинают расходиться, дабы пересечь переобучение 
+plt.plot(loss_on_train)
+plt.plot(loss_on_val)
+plt.grid()
+plt.show()
+
+loss_on_test = 0
+k2 = 0
+model.eval()
+
+for X_test, y_test in test_dataloader:
+    output = model(X_test)
+    loss = loss_entry(output, y_test)
+    loss_on_test += loss
+    k2 += 1
+
+print(f'Результат функции потерь: {loss_on_test/k2}')
+
